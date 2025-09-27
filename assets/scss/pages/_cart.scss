@@ -1,0 +1,90 @@
+.bg-color{
+     background: #FAFAFA;
+}
+
+.number-input .form-control {
+     max-width: 44px;
+
+}
+
+.sofa-img{
+     height: 100px;
+     width: 100px;
+}
+
+
+.form-check {
+     margin-bottom: 0;
+}
+
+.Ps-lg-486{
+     padding-right: 486px;
+}
+
+.guesscard{
+     border: 0.54px solid #F4DDB9;
+}
+
+
+.btn-next{
+     width:160px;
+}
+
+.Mb-97{
+     margin-bottom: 97px;
+}
+.Py-9{
+     padding-top: 9px;
+     padding-bottom: 9px;
+}
+
+.Mx-12{
+     margin-right: -12px;
+     margin-left: -12px;
+}
+
+
+@media (min-width: 992px) {
+     .btn-next{
+     width:260px;
+     }
+     .mb-lg-120{
+          margin-bottom: 120px;
+     }
+     .sofa-img{
+          height: 150px;
+          width: 200px;
+     }
+}
+
+
+.z-index-1{
+     z-index: 2;
+}
+
+
+.delete-position{
+     position:absolute;
+     right: -12px;
+     top: 0;
+
+
+}
+
+.cart {
+  display: grid;
+  grid-template-columns: 5.7% 37.97% 14.87% 14.87% 14.87% 11.72%;
+  grid-template-rows: 40px 20px 56px  20px 150px 20px 150px;
+}
+.header {
+  grid-area: header;
+}
+.sellName {
+  grid-area: sellName;
+}
+.product1 {
+  grid-area: product1;
+}
+.product2{
+  grid-area: product2;
+}
