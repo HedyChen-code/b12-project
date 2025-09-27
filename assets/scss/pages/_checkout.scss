@@ -7,21 +7,66 @@
   }
 }
 .checkout {
+  // radio
+  .form-check,
+  .form-check input[type='radio'],
+  .form-check label {
+    cursor: pointer;
+  }
   .form-check {
     border: 1px solid $neutral-500;
     background-color: $neutral-50;
     &-input {
       font-size: 19px;
       margin: 10.5px;
+      border: 1px solid black;
+    }
+    &:hover {
+      border: 1px solid $primary-600;
+      background-color: $primary-100;
+      .form-check-input {
+        border: 1px solid $primary-600;
+      }
+    }
+    .form-control {
+      border: 1px solid $neutral-500;
     }
   }
   .form-check.active-border {
     border: 1px solid $primary-600;
     background-color: $primary-100;
+    .form-check-input {
+      border: 1px solid $primary-500;
+    }
+    .form-control {
+      border: 1px solid $primary-300;
+    }
   }
-  .w-64 {
-    width: 64px;
+  // 發票類型按鈕
+  &-typeBtn {
+    color: $neutral-900;
+    border: 1px solid $neutral-500;
+    background-color: $neutral-50;
+    &:hover {
+      color: $primary-700;
+      border: 1px solid $primary-600;
+      background-color: $primary-100;
+    }
   }
+  // 新增信用卡按鈕
+  &-creditcardBtn {
+    color: $primary-700;
+    border: 1px solid $primary-500;
+    background-color: $neutral-50;
+    &:hover {
+      color: $white;
+      border: 1px solid $primary-700;
+      background-color: $primary-700;
+    }
+  }
+}
+.w-64 {
+  width: 64px;
 }
 .w-160 {
   width: 160px;
@@ -35,8 +80,8 @@
     padding-top: 10.5px;
     padding-bottom: 10.5px;
   }
-  .w-lg-50 {
-    width: 50%;
+  .w-lg-608 {
+    width: 608px;
   }
   .w-lg-260 {
     width: 260px;

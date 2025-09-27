@@ -54,6 +54,51 @@ if (url.includes("cart.html")) {
   setActiveStep(3);
 }
 
+//購物車頁面+結帳頁面 釘選在下方的總計 使用gsap在指定位置取消釘選
+  gsap.registerPlugin(ScrollTrigger);
+
+  const footer = document.getElementById("sticky-footer");
+
+  let triggerInstance = null;
+
+  function setupScrollTrigger() {
+    // 移除先前註冊的 ScrollTrigger（如果有的話）
+    if (triggerInstance) {
+      triggerInstance.kill();
+      triggerInstance = null;
+    }
+
+    if (window.innerWidth >= 992) {
+      // 桌面版才註冊
+      triggerInstance = ScrollTrigger.create({
+        trigger: "#pay",
+        start: "top bottom",
+        end: "bottom center",
+        onEnter: () => {
+          gsap.to(footer, { y: 100, opacity: 0, duration: 0.3 });
+        },
+        onLeaveBack: () => {
+          gsap.to(footer, { y: 0, opacity: 1, duration: 0.3 });
+        },
+      });
+    } else {
+      // 手機版，恢復 footer 狀態
+      gsap.to(footer, { y: 0, opacity: 1, duration: 0.3 });
+    }
+  }
+
+  // 初始化一次
+  setupScrollTrigger();
+
+  // 加 debounce 防止 resize 過於頻繁觸發
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      setupScrollTrigger();
+    }, 200);
+  });
+
 //首頁
 function initializeHomePage() {
   AOS.init({
@@ -171,80 +216,64 @@ function initializeProductPage() {
 // 結帳頁
 function initializeCheckoutPage() {
   // 結帳頁面選取寄送資訊時變更CSS
-  const radios = document.querySelectorAll(
-    'input[type="radio"][name="shipping-information-radio"]'
+  // 定義每組 radio 的選擇器
+const radioGroups = [
+  'input[type="radio"][name="shipping-information-radio"]',
+  'input[type="radio"][name="shipping-creditcard-radio"]',
+  'input[type="radio"][name="shipping-invoicetype-radio"]',
+  'input[type="radio"][name="shipping-invoicepersonal-radio"]'
+];
+
+// 合併所有 radio 元素
+const allRadios = radioGroups
+  .map(selector => Array.from(document.querySelectorAll(selector)))
+  .flat();
+
+function updateBorders() {
+  // 清除所有 .form-check 的 active-border
+  document.querySelectorAll(".form-check").forEach(el =>
+    el.classList.remove("active-border")
   );
-  const radios2 = document.querySelectorAll(
-    'input[type="radio"][name="shipping-creditcard-radio"]'
-  );
 
-  function updateBorders() {
-    document
-      .querySelectorAll(".form-check")
-      .forEach((el) => el.classList.remove("active-border"));
-    radios.forEach((radio) => {
-      if (radio.checked) {
-        radio.closest(".form-check").classList.add("active-border");
+  // 為所有 checked radio 加上 active-border
+  allRadios.forEach(radio => {
+    if (radio.checked) {
+      const formCheck = radio.closest(".form-check");
+      if (formCheck) {
+        formCheck.classList.add("active-border");
       }
-    });
-    radios2.forEach((radio) => {
-      if (radio.checked) {
-        radio.closest(".form-check").classList.add("active-border");
-      }
-    });
-  }
-  radios.forEach((radio) => {
-    radio.addEventListener("change", updateBorders);
-  });
-  radios2.forEach((radio) => {
-    radio.addEventListener("change", updateBorders);
-  });
-
-  // 初始呼叫一次以設定預設 checked 的CSS
-  updateBorders();
-
-  //結帳頁面釘選在下方的總計 使用gsap在指定位置取消釘選
-  gsap.registerPlugin(ScrollTrigger);
-
-  const footer = document.getElementById("sticky-footer");
-
-  let triggerInstance = null;
-
-  function setupScrollTrigger() {
-    // 移除先前註冊的 ScrollTrigger（如果有的話）
-    if (triggerInstance) {
-      triggerInstance.kill();
-      triggerInstance = null;
     }
-
-    if (window.innerWidth >= 992) {
-      // 桌面版才註冊
-      triggerInstance = ScrollTrigger.create({
-        trigger: "#pay",
-        start: "top bottom",
-        end: "bottom center",
-        onEnter: () => {
-          gsap.to(footer, { y: 100, opacity: 0, duration: 0.3 });
-        },
-        onLeaveBack: () => {
-          gsap.to(footer, { y: 0, opacity: 1, duration: 0.3 });
-        },
-      });
-    } else {
-      // 手機版，恢復 footer 狀態
-      gsap.to(footer, { y: 0, opacity: 1, duration: 0.3 });
-    }
-  }
-
-  // 初始化一次
-  setupScrollTrigger();
-
-  // 加 debounce 防止 resize 過於頻繁觸發
-  let resizeTimeout;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      setupScrollTrigger();
-    }, 200);
   });
+}
+
+// 為所有 radio 綁定 change 事件
+allRadios.forEach(radio =>
+  radio.addEventListener("change", updateBorders)
+);
+
+// 頁面初始化執行一次，處理預設選項
+updateBorders();
+
+// 先抓取發票類型的 radio buttons
+const invoiceTypeRadios = document.querySelectorAll('input[name="shipping-invoicetype-radio"]');
+
+// 抓取 collapse 元素
+const collapsePersonal = document.getElementById('collapsePersonal');
+
+// Bootstrap collapse 實例
+const bsCollapsePersonal = bootstrap.Collapse.getOrCreateInstance(collapsePersonal);
+
+invoiceTypeRadios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    if (radio.id === 'shipping-invoicetype-1' && radio.checked) {
+      // 選擇個人，展開個人區塊
+      bsCollapsePersonal.show();
+    } else if (radio.id === 'shipping-invoicetype-2' && radio.checked) {
+      // 選擇公司，收起個人區塊
+      bsCollapsePersonal.hide();
+    }
+  });
+});
+
+
 }
